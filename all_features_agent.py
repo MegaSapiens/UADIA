@@ -20,7 +20,7 @@ async def read_root():
     return {"message": "Агент работает"}
 
 # Интеграция FastAPI приложения с агентом
-agent.include_router(app)
+# agent.include_router(app)
 
 
 # Обработка события запуска
