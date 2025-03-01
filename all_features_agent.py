@@ -15,6 +15,8 @@ class ResponseMessage(Model):
 async def on_startup(ctx: Context):
     ctx.logger.info("Agent is starting up")
     ctx.storage.set("startup_count", 0)
+    # Отправка сообщения самому агенту для имитации пользовательского события
+    await ctx.send(ctx.agent.address, CustomMessage(text="Triggering custom event"))
 
 # Обработка события завершения работы
 @agent.on_event("shutdown")
@@ -22,25 +24,22 @@ async def on_shutdown(ctx: Context):
     ctx.logger.info("Agent is shutting down")
 
 # Обработка пользовательского события
-@agent.on_event("custom_event")
-async def on_custom_event(ctx: Context):
-    ctx.logger.info("Custom event occurred")
-
-# Генерация пользовательского события при запуске
-@agent.on_event("startup")
-async def trigger_custom_event(ctx: Context):
-    await ctx.trigger_event("custom_event")
+@agent.on_message(model=CustomMessage)
+async def on_custom_event(ctx: Context, sender: str, message: CustomMessage):
+    ctx.logger.info(f"Custom event occurred with message: {message.text}")
 
 # Обработка сообщения
 @agent.on_message(model=CustomMessage)
-async def handle_message(ctx: Context, message: CustomMessage):
+async def handle_message(ctx: Context, sender: str, message: CustomMessage):
     ctx.logger.info(f'Received message: {message.text}')
-    await ctx.send(ctx.sender, ResponseMessage(response="Message received"))
+    await ctx.send(sender, ResponseMessage(response="Message received"))
 
 # Обработка интервала
-@agent.on_interval(period=5.0)
+@agent.on_interval(period=15.0)
 async def on_interval(ctx: Context):
-    startup_count = ctx.storage.get("startup_count", 0)
+    startup_count = ctx.storage.get("startup_count")
+    if startup_count is None:
+        startup_count = 0
     ctx.logger.info(f"Agent has started {startup_count} times.")
     ctx.storage.set("startup_count", startup_count + 1)
 
