@@ -1,4 +1,5 @@
 from uagents import Agent, Context, Model
+from fastapi import FastAPI
 
 # Создание агента с именем "all_features_agent"
 agent = Agent(name="all_features_agent", seed="all_features_agent_seed")
@@ -9,6 +10,18 @@ class CustomMessage(Model):
 
 class ResponseMessage(Model):
     response: str
+    
+# Создание FastAPI приложения
+app = FastAPI()
+
+# Обработка GET-запроса на корневой URL
+@app.get("/")
+async def read_root():
+    return {"message": "Агент работает"}
+
+# Интеграция FastAPI приложения с агентом
+agent.include_router(app)
+
 
 # Обработка события запуска
 @agent.on_event("startup")
