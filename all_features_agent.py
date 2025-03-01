@@ -13,26 +13,26 @@ class ResponseMessage(Model):
 # Обработка события запуска
 @agent.on_event("startup")
 async def on_startup(ctx: Context):
-    ctx.logger.info("Agent is starting up")
+    ctx.logger.info("Агент запущен")
     ctx.storage.set("startup_count", 0)
     # Отправка сообщения самому агенту для имитации пользовательского события
-    await ctx.send(ctx.agent.address, CustomMessage(text="Triggering custom event"))
+    await ctx.send(ctx.agent.address, CustomMessage(text="Тригерное событие при запуске"))
 
 # Обработка события завершения работы
 @agent.on_event("shutdown")
 async def on_shutdown(ctx: Context):
-    ctx.logger.info("Agent is shutting down")
+    ctx.logger.info("Агент остановлен")
 
 # Обработка пользовательского события
 @agent.on_message(model=CustomMessage)
 async def on_custom_event(ctx: Context, sender: str, message: CustomMessage):
-    ctx.logger.info(f"Custom event occurred with message: {message.text}")
+    ctx.logger.info(f"Произошло пользовательское событие с сообщением: {message.text}")
 
 # Обработка сообщения
 @agent.on_message(model=CustomMessage)
 async def handle_message(ctx: Context, sender: str, message: CustomMessage):
-    ctx.logger.info(f'Received message: {message.text}')
-    await ctx.send(sender, ResponseMessage(response="Message received"))
+    ctx.logger.info(f'Полученное сообщение: {message.text}')
+    await ctx.send(sender, ResponseMessage(response="Сообщение получено."))
 
 # Обработка интервала
 @agent.on_interval(period=15.0)
@@ -46,8 +46,8 @@ async def on_interval(ctx: Context):
 # Обработка запросов
 @agent.on_query(model=CustomMessage, replies={ResponseMessage})
 async def query_handler(ctx: Context, sender: str, query: CustomMessage):
-    ctx.logger.info(f"Query received: {query.text}")
-    await ctx.send(sender, ResponseMessage(response="Query processed"))
+    ctx.logger.info(f"Получен запрос: {query.text}")
+    await ctx.send(sender, ResponseMessage(response="Запрос обработан"))
 
 if __name__ == "__main__":
     agent.run()
