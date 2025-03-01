@@ -2,7 +2,7 @@ from uagents import Agent, Context, Model
 from fastapi import FastAPI
 
 # Создание агента с именем "all_features_agent"
-agent = Agent(name="all_features_agent", seed="all_features_agent_seed")
+agent = Agent(name="all_features_agent", seed="all_features_agent_seed", endpoint="127.0.0.1", port="8001")
 
 # Пример модели сообщения
 class CustomMessage(Model):
