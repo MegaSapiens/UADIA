@@ -62,5 +62,11 @@ async def query_handler(ctx: Context, sender: str, query: CustomMessage):
     ctx.logger.info(f"Получен запрос: {query.text}")
     await ctx.send(sender, ResponseMessage(response="Запрос обработан"))
 
+@agent.on_rest_get("/my-test-url")
+async def test_handler(ctx, request):
+    ctx.logger.info(f"Получен запрос: {request}")
+    return ResponseMessage(response="my test URL")
+    
+
 if __name__ == "__main__":
     agent.run()
